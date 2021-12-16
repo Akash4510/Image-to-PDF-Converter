@@ -23,6 +23,11 @@ if "Documents" not in os.listdir(f"{os.getcwd()}/Assets"):
 class ImageManager:
 
     @staticmethod
+    def clear_temp_folder():
+        for img in os.listdir(PATH_FOR_TEMP_IMAGES):
+            os.remove(f"{PATH_FOR_TEMP_IMAGES}/{img}")
+
+    @staticmethod
     def _convert_to_png(image_path, output_path=PATH_FOR_TEMP_IMAGES):
         """
         Converts the given image in png format and resize the image to fit the page if required
@@ -55,8 +60,7 @@ class ImageManager:
         :param filename: Filename of the output PDF
         """
         # Remove all the previous images in the image folder
-        for img in os.listdir(PATH_FOR_TEMP_IMAGES):
-            os.remove(f"{PATH_FOR_TEMP_IMAGES}/{img}")
+        self.clear_temp_folder()
 
         for img in images:
             self._convert_to_png(img)
@@ -74,6 +78,8 @@ class ImageManager:
             filename = f"ProConverter_{today.strftime('%d_%b %H-%M-%S')}"
         pdf.output(f"{output_path}/{filename}.pdf", "F")
         print("PDF Created successfully")
+
+        self.clear_temp_folder()
 
 
 im_manager = ImageManager()
