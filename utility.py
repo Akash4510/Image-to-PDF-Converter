@@ -12,11 +12,11 @@ if "Assets" not in os.listdir(os.getcwd()):
     os.mkdir(f"{os.getcwd()}/Assets")
 
 if "TempImages" not in os.listdir(f"{os.getcwd()}/Assets"):
-    print("Assets/TempImages folder")
+    print("Created Assets/TempImages folder")
     os.mkdir(f"{os.getcwd()}/Assets/TempImages")
 
 if "Documents" not in os.listdir(f"{os.getcwd()}/Assets"):
-    print("Assets/Documents folder")
+    print("Created Assets/Documents folder")
     os.mkdir(f"{os.getcwd()}/Assets/Documents")
 
 
@@ -35,6 +35,21 @@ class ImageManager:
         except FileNotFoundError:
             print("File not found")
         else:
+            image_width, image_height = image.size
+            max_width, max_height = (540, 785)
+
+            # Resizing the images that are bigger than the maximum width or the maximum height,
+            # maintaining the original aspect ratio of the images
+            if image_width > max_width:
+                w_percentage = (max_width / float(image_width))
+                h_size = int((float(image_height) * float(w_percentage)))
+                image = image.resize((max_width, h_size), Image.ANTIALIAS)
+
+            if image_height > max_height:
+                h_percentage = (max_height / float(image_height))
+                w_size = int((float(image_width) * float(h_percentage)))
+                image = image.resize((w_size, max_height), Image.ANTIALIAS)
+
             image_name = image_path.split("/")[-1].split(".")[0]
             image.save(fp=f"{output_path}/{image_name}.png")
 
@@ -59,7 +74,9 @@ class ImageManager:
         pdf = FPDF()
         for image in final_images:
             pdf.add_page()
-            pdf.image(image, x=10, y=10, w=190)
+            img_width, img_height = Image.open(image).size
+            print(img_width, img_height)
+            pdf.image(image, x=10, y=10)
 
         if filename == "":
             today = datetime.datetime.now()
